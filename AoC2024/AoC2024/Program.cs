@@ -11,10 +11,10 @@
             };
 
             Console.WriteLine("Welcome to Pdawg's AoC 2024!");
-            Console.WriteLine("Enter the puzzle ID to solve (1 - 31): ");
+            Console.WriteLine("Enter the puzzle ID to solve (1 - 25): ");
 
             int puzzleId = int.Parse(Console.ReadLine());
-            if (puzzleId <= 0 || puzzleId > 31) throw new ArgumentOutOfRangeException("The puzzle ID cannot be <= 0 or > 31.");
+            if (puzzleId <= 0 || puzzleId > 25) throw new ArgumentOutOfRangeException("The puzzle ID cannot be <= 0 or > 25.");
             if (puzzleId > puzzles.Length) throw new NotImplementedException("This puzzle has not been implemented yet.");
 
             byte part = 0;
