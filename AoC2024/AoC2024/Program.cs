@@ -1,4 +1,6 @@
-﻿namespace AoC2024
+﻿using AoC2024.Puzzles;
+
+namespace AoC2024
 {
     internal class Program
     {
@@ -8,6 +10,7 @@
             {
                 new Day1(),
                 new Day2(),
+                new Day3(),
             };
 
             Console.WriteLine("Welcome to Pdawg's AoC 2024!");

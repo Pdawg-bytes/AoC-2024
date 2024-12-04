@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static AoC2024.InputSecrets;
+﻿using static AoC2024.InputSecrets;
 
-namespace AoC2024
+namespace AoC2024.Puzzles
 {
     internal class Day1 : IPuzzle
     {
