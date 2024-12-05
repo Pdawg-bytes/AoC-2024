@@ -16,21 +16,19 @@ namespace AoC2024.Puzzles
                 .Select(row => row.ToCharArray())
                 .ToArray();
 
-            Vector2[] directions = 
-            { 
-                new Vector2(-1, 1),  // x - 1; y + 1
-                new Vector2(0, 1),   // x;     y + 1
-                new Vector2(1, 1),   // x + 1; y + 1
-                new Vector2(1, 0),   // x + 1; y
-                new Vector2(1, -1),  // x + 1; y - 1
-                new Vector2(0, -1),  // x;     y - 1
-                new Vector2(-1, -1), // x - 1; y - 1
-                new Vector2(-1, 0)   // x - 1; y 
+            Complex[] directions =
+            {
+                new Complex(-1, 1),  // x - 1; y + 1
+                new Complex(0, 1),   // x;     y + 1
+                new Complex(1, 1),   // x + 1; y + 1
+                new Complex(1, 0),   // x + 1; y
+                new Complex(1, -1),  // x + 1; y - 1
+                new Complex(0, -1),  // x;     y - 1
+                new Complex(-1, -1), // x - 1; y - 1
+                new Complex(-1, 0)   // x - 1; y 
             };
 
-            char[] sequence = { 'X', 'M', 'A', 'S' };
-
-            Vector2 position = new Vector2(0, 0);
+            char[] pattern = { 'X', 'M', 'A', 'S' };
 
             switch (part)
             {
