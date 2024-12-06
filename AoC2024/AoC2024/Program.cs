@@ -12,6 +12,7 @@ namespace AoC2024
                 new Day2(),
                 new Day3(),
                 new Day4(),
+                new Day5(),
             };
 
             Console.WriteLine("Welcome to Pdawg's AoC 2024!");
@@ -22,14 +23,11 @@ namespace AoC2024
             if (puzzleId > puzzles.Length) throw new NotImplementedException("This puzzle has not been implemented yet.");
 
             byte part = 0;
-            if (puzzles[puzzleId - 1].RequiresMultiPart)
-            {
-                Console.WriteLine("This is a multi-part puzzle! Please enter the part to solve.");
-                part = (byte)int.Parse(Console.ReadLine());
-                if (part <= 0) throw new ArgumentOutOfRangeException("The part cannot be 0. Must be >= 1.");
-            }
+            Console.WriteLine("Enter the part to solve.");
+            part = (byte)int.Parse(Console.ReadLine());
+            if (part <= 0) throw new ArgumentOutOfRangeException("The part cannot be 0. Must be >= 1.");
 
-            Console.WriteLine($"Answer to puzzle {puzzleId}: {puzzles[puzzleId - 1].FindAnswer(part)}");
+            Console.WriteLine($"Answer to puzzle {puzzleId}, part {part}: {puzzles[puzzleId - 1].FindAnswer(part)}");
         }
     }
 }

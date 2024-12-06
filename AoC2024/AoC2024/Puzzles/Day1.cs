@@ -6,8 +6,6 @@ namespace AoC2024.Puzzles
     {
         public int PuzzleID => 1;
 
-        public bool RequiresMultiPart => true;
-
         public string FindAnswer(byte part)
         {
             // Input parsing (part-agnostic)

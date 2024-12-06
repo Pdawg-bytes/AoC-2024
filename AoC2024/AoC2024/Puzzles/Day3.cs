@@ -7,8 +7,6 @@ namespace AoC2024.Puzzles
     {
         public int PuzzleID => 3;
 
-        public bool RequiresMultiPart => true;
-
         private static readonly Regex part1Regex = new(pattern: @"mul\((\d{1,3}),(\d{1,3})\)", options: RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex part2Regex = new(pattern: @"do\(\)|don't\(\)|mul\((\d{1,3}),(\d{1,3})\)", options: RegexOptions.Compiled | RegexOptions.IgnoreCase);
 

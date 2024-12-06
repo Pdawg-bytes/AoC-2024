@@ -6,8 +6,6 @@ namespace AoC2024.Puzzles
     {
         public int PuzzleID => 2;
 
-        public bool RequiresMultiPart => true;
-
         bool DiffChecks(int[] r)
         {
             int[] diffs = Enumerable.Range(0, r.Length - 1)
