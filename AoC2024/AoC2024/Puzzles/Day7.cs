@@ -13,83 +13,57 @@ namespace AoC2024.Puzzles
 
         public string FindAnswer(byte part)
         {
-            Dictionary<long, List<int[]>> parsed = DAY7_INPUT.Split("\n").Select(line => line.Split(':'))
-                .GroupBy(parts => long.Parse(parts[0].Trim()))
+            Dictionary<ulong, List<ulong[]>> parsed = DAY7_INPUT.Split("\n").Select(line => line.Split(':'))
+                .GroupBy(parts => ulong.Parse(parts[0].Trim()))
                 .ToDictionary(
                     group => group.Key,
-                    group => group.Select(parts => parts[1].Trim().Split(' ').Select(int.Parse).ToArray()).ToList()
+                    group => group.Select(parts => parts[1].Trim().Split(' ').Select(ulong.Parse).ToArray()).ToList()
                 );
 
             switch (part)
             {
                 case 1:
-                    List<string> permutatedSequences = new();
-                    string[] operators = ["+", "*"];
-
-                    return parsed
-                        .Select(set =>
-                        {
-                            foreach (int[] nums in set.Value)
-                            {
-                                var permutatedSequences = GenerateOperatorPermutations(operators, nums.Length - 1)
-                                .Select(perm =>
-                                {
-                                    var combined = new List<string> { nums[0].ToString() };
-                                    for (int i = 1; i < nums.Length; i++)
-                                    {
-                                        combined.Add(perm[i - 1]);
-                                        combined.Add(nums[i].ToString());
-                                    }
-                                    return string.Join("", combined);
-                                }).ToList();
-
-                                return permutatedSequences.Where(exp => EvaluateExpression(exp) == set.Key).Select(exp => set.Key).FirstOrDefault();
-                            }
-                            return 0;
-                        })
-                        .Sum(result => result).ToString();
+                    return GetResult(["+", "*"], ref parsed).ToString();
                 case 2:
-                    break;
+                    return GetResult(["+", "*", "||"], ref parsed).ToString();
             }
             return "Unable to find answer!";
         }
 
+        private ulong GetResult(string[] operators, ref Dictionary<ulong, List<ulong[]>> parsed)
+        {
+            return parsed
+                .SelectMany(set => set.Value
+                    .Where(nums =>
+                        GenerateOperatorPermutations(operators, nums.Length - 1)
+                            .Any(perm => EvaluateExpression(nums.Select(n => n).ToArray(), perm) == set.Key)
+                    )
+                    .Select(_ => set.Key)
+                )
+                .Aggregate(0UL, (acc, key) => acc + key);
+        }
+
+        private List<string[]> res = new List<string[]>();
         private List<string[]> GenerateOperatorPermutations(string[] operators, int length)
         {
-            var result = new List<string[]>();
+            res.Clear();
             void RecursiveGenerate(int len, string[] current)
             {
-                if (len == 0) { result.Add((string[])current.Clone()); return; }
-
-                foreach (var op in operators)
-                {
-                    current[len - 1] = op;
-                    RecursiveGenerate(len - 1, current);
-                }
+                if (len == 0) { res.Add((string[])current.Clone()); return; }
+                foreach (var op in operators) { current[len - 1] = op; RecursiveGenerate(len - 1, current); }
             }
             RecursiveGenerate(length, new string[length]);
-            return result;
+            return res;
         }
-        private  long EvaluateExpression(string expression)
+        private ulong EvaluateExpression(ulong[] numbers, string[] operators)
         {
-            var tokens = Regex.Split(expression, @"([+*])").Where(t => !string.IsNullOrWhiteSpace(t)).ToArray();
-
-            long result = long.Parse(tokens[0]);
-            for (int i = 1; i < tokens.Length; i += 2)
+            ulong result = numbers[0];
+            for (int i = 0; i < operators.Length; i++)
             {
-                string operatorSymbol = tokens[i];
-                long number = int.Parse(tokens[i + 1]);
-
-                if (operatorSymbol == "+")
-                {
-                    result += number;
-                }
-                else if (operatorSymbol == "*")
-                {
-                    result *= number;
-                }
+                if (operators[i] == "+") result += numbers[i + 1];
+                else if (operators[i] == "*") result *= numbers[i + 1];
+                else if (operators[i] == "||") result = ulong.Parse($"{result}{numbers[i + 1]}");
             }
-
             return result;
         }
     }
