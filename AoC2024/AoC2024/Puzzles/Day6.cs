@@ -1,105 +1,69 @@
-﻿using System;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using static AoC2024.InputSecrets;
+﻿using static AoC2024.InputSecrets;
 
 namespace AoC2024.Puzzles
 {
     internal class Day6 : IPuzzle
     {
-        public int PuzzleID => 5;
+        public int PuzzleID => 6;
 
         static char[][] input;
         static int rows;
         static int cols;
 
-        enum Direction
-        {
-            Up,
-            Down,
-            Left,
-            Right
-        }
-
         public string FindAnswer(byte part)
         {
             input = DAY6_INPUT.Split("\r\n")
-            .Select(row => row.ToCharArray())
-            .ToArray();
+                .Select(row => row.ToCharArray())
+                .ToArray();
             rows = input.Length;
             cols = input[0].Length;
+
+            int[] startingPos = input
+                .Select((row, rowIndex) => new { row, rowIndex })
+                .Where(x => x.row.Contains('^'))
+                .Select(x => new[] { x.rowIndex, Array.IndexOf(x.row, '^') }).First();
+
+            int[][] directions = { [-1, 0], [0, 1], [1, 0], [0, -1] };
 
             switch (part)
             {
                 case 1:
-                    string[] horizontal = input.Select(row => new string(row)).ToArray();
-                    string[] vertical = Enumerable.Range(0, input[0].Length).Select(col => new string(Enumerable.Range(0, input.Length).Select(row => input[row][col]).ToArray())).ToArray();
-
-                    int[] startingPos = input
-                        .Select((row, rowIndex) => new { row, rowIndex })
-                        .Where(x => x.row.Contains('^'))
-                        .Select(x => new int[] { x.rowIndex, Array.IndexOf(x.row, '^') })
-                        .First();
-
-                    int[] pos = startingPos;
-                    int total = 0;
-                    Direction dir = Direction.Up;
-
-                    // this code is terrible i dont have any more time for tonight
-                    do
                     {
-                        if (dir == Direction.Up)
-                        {
-                            string verticalLine = vertical[pos[1]];
-                            int caretIndex = pos[0];
-                            int hashIndex = verticalLine.LastIndexOf('#', caretIndex - 1);
-                            int distance = caretIndex - hashIndex - 1;
-                            total += Math.Abs(distance);
-                            pos[0] = pos[0] - distance;
-                            dir = Direction.Right;
-                            continue;
-                        }
-                        else if (dir == Direction.Down)
-                        {
-                            string verticalLine = vertical[pos[1]];
-                            int caretIndex = pos[0];
-                            int hashIndex = verticalLine.IndexOf('#', caretIndex - 1);
-                            int distance = hashIndex - caretIndex - 1;
-                            total += Math.Abs(distance);
-                            pos[0] = pos[0] + distance;
-                            dir = Direction.Left;
-                            continue;
-                        }
-                        else if (dir == Direction.Left)
-                        {
-                            string horizontalLine = horizontal[pos[0]];
-                            int caretIndex = pos[1];
-                            int hashIndex = horizontalLine.LastIndexOf('#', caretIndex - 1);
-                            int distance = caretIndex - hashIndex - 1;
-                            total += Math.Abs(distance);
-                            pos[1] = pos[1] - distance;
-                            dir = Direction.Up;
-                            continue;
-                        }
-                        else if (dir == Direction.Right)
-                        {
-                            string horizontalLine = horizontal[pos[0]];
-                            int caretIndex = pos[1];
-                            int hashIndex = horizontalLine.IndexOf('#', caretIndex + 1);
-                            int distance = hashIndex >= 0 ? hashIndex - caretIndex - 1 : horizontalLine.Length - caretIndex - 1;
-                            total += Math.Abs(distance);
-                            pos[1] = pos[1] + distance;
-                            dir = Direction.Down;
-                            continue;
-                        }
-                    } while (pos[0] > 0 && pos[0] < horizontal.Length && pos[1] > 0 && pos[1] < vertical.Length);
+                        int dir = 0;
+                        var pos = (x: startingPos[1], y: startingPos[0]);
+                        var visited = new HashSet<(int x, int y)> { pos };
 
-                    Console.WriteLine((total-1).ToString());
-                    break;
+                        while (true)
+                        {
+                            (int x, int y) newPos = (pos.x + directions[dir][1], pos.y + directions[dir][0]);
+                            if (newPos.x < 0 || newPos.x >= cols || newPos.y < 0 || newPos.y >= rows) break;
+                            if (input[newPos.y][newPos.x] == '#') dir = (dir + 1) % 4;
+                            else { pos = newPos; visited.Add(pos); }
+                        }
+                        return visited.Count.ToString();
+                    }
                 case 2:
-                    break;
-            }
+                    {
+                        var visited = new HashSet<(int x, int y, int dir)>();
+                        return Enumerable.Range(0, rows)
+                            .SelectMany(i => Enumerable.Range(0, cols), (i, j) =>
+                            {
+                                int dir = 0;
+                                var pos = (x: startingPos[1], y: startingPos[0]);
+                                visited.Clear();
 
+                                while (true)
+                                {
+                                    if (!visited.Add((pos.x, pos.y, dir))) { return 1; }
+                                    var newPos = (x: pos.x + directions[dir][1], y: pos.y + directions[dir][0]);
+                                    if (newPos.x < 0 || newPos.x >= cols || newPos.y < 0 || newPos.y >= rows) break;
+                                    if (input[newPos.y][newPos.x] == '#' || (newPos.x == j && newPos.y == i)) dir = (dir + 1) % 4;
+                                    else pos = newPos;
+                                }
+                                return 0;
+                            }).Sum().ToString();
+                    }
+            }
             return "Unable to find answer!";
         }
     }
