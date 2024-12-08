@@ -1,6 +1,4 @@
 ﻿using System.Data;
-using System.Linq;
-using System.Text.RegularExpressions;
 using static AoC2024.InputSecrets;
 
 namespace AoC2024.Puzzles
@@ -8,8 +6,6 @@ namespace AoC2024.Puzzles
     internal class Day7 : IPuzzle
     {
         public int PuzzleID => 7;
-
-        static DataTable dataTable = new DataTable();
 
         public string FindAnswer(byte part)
         {
@@ -32,29 +28,30 @@ namespace AoC2024.Puzzles
 
         private ulong GetResult(string[] operators, ref Dictionary<ulong, List<ulong[]>> parsed)
         {
-            return parsed
-                .SelectMany(set => set.Value
-                    .Where(nums =>
-                        GenerateOperatorPermutations(operators, nums.Length - 1)
-                            .Any(perm => EvaluateExpression(nums.Select(n => n).ToArray(), perm) == set.Key)
-                    )
-                    .Select(_ => set.Key)
-                )
-                .Aggregate(0UL, (acc, key) => acc + key);
+            ulong result = 0;
+            foreach (var set in parsed)
+            {
+                foreach (var nums in set.Value)
+                {
+                    bool found = false;
+                    GenerateOperatorPermutations(operators, nums.Length - 1, perm => { if (EvaluateExpression(nums, perm) == set.Key) found = true; });
+                    if (found) result += set.Key;
+                }
+            }
+            return result;
         }
 
-        private List<string[]> res = new List<string[]>();
-        private List<string[]> GenerateOperatorPermutations(string[] operators, int length)
+        private void GenerateOperatorPermutations(string[] operators, int length, Action<string[]> resultCallback)
         {
-            res.Clear();
-            void RecursiveGenerate(int len, string[] current)
+            string[] current = new string[length];
+            void RecursiveGenerate(int len)
             {
-                if (len == 0) { res.Add((string[])current.Clone()); return; }
-                foreach (var op in operators) { current[len - 1] = op; RecursiveGenerate(len - 1, current); }
+                if (len == 0) { resultCallback(current); return; }
+                for (int i = 0; i < operators.Length; i++) { current[len - 1] = operators[i]; RecursiveGenerate(len - 1); }
             }
-            RecursiveGenerate(length, new string[length]);
-            return res;
+            RecursiveGenerate(length);
         }
+
         private ulong EvaluateExpression(ulong[] numbers, string[] operators)
         {
             ulong result = numbers[0];
