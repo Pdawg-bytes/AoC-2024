@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Runtime.CompilerServices;
 using static AoC2024.InputSecrets;
 
