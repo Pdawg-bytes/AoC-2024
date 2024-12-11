@@ -3,7 +3,7 @@ namespace AoC2024.Puzzles
 {
     internal class Day8 : IPuzzle
     {
-        public int PuzzleID => 9;
+        public int PuzzleID => 8;
 
         public string FindAnswer(byte part)
         {
