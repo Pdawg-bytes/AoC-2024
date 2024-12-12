@@ -19,6 +19,7 @@ namespace AoC2024
                 new Day9(),
                 new Day10(),
                 new Day11(),
+                new Day12(),
             };
 
             Console.WriteLine("Welcome to Pdawg's AoC 2024!");
