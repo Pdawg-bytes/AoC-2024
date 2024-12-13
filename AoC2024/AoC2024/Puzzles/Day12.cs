@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using static AoC2024.InputSecrets;
 namespace AoC2024.Puzzles
 {
